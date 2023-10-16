@@ -25,6 +25,13 @@ public fun PagesColumn(
     onAddPage: (MDContentElement) -> Unit
 
 ) {
+    /*Column {
+        pages.forEach { page ->
+            PageScreen(
+                page, currentPage, onSelect, onAddPage
+            )
+        }
+    }*/
     LazyColumn {
         pages(
             pages,
@@ -32,84 +39,66 @@ public fun PagesColumn(
             onSelect,
             onAddPage
         )
-        /*pages.forEach { page: MDContentElement ->
-            stickyHeader {
-                Surface(
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable(true, onClick = {
-                            onSelect(page)
-                        }),
-                    color = if (currentPage?.id == page.id) {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
-                    } else {
-                        MaterialTheme.colorScheme.background
-                    },
-                ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = page.title
-                        )
-                        IconButton(
-                            onClick = {
-                                onAddPage(page)
-                            },
-                            modifier = Modifier.size(18.dp),
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.secondaryContainer
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add page to section"
-                            )
-                        }
-                    }
-                }
 
-            }
-            items(page.pages) { item: MDContentElement ->
-                Surface(
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable(true, onClick = {
-                            onSelect(item)
-                        }),
-                    color = if (currentPage?.id == item.id) {
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
-                    } else {
-                        MaterialTheme.colorScheme.background
-                    },
-                ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = item.title
-                        )
-                        IconButton(
-                            onClick = {
-
-                            },
-                            modifier = Modifier.size(18.dp),
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.secondaryContainer
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add page to section"
-                            )
-                        }
-                    }
-                }
-            }
-        }*/
     }
+}
+
+@Composable
+public fun PageScreen(
+    page: MDContentElement,
+    currentPage: MDContentElement?,
+    onSelect: (MDContentElement) -> Unit,
+    onAddPage: (MDContentElement) -> Unit
+) {
+    Column {
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .clickable(true, onClick = {
+                    onSelect(page)
+                }),
+            color = if (currentPage?.id == page.id) {
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+            } else {
+                MaterialTheme.colorScheme.background
+            },
+        ) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (page.type == MDContentElementType.SubPage)
+                        "   " + page.title
+                    else page.title
+                )
+                if (page.type != MDContentElementType.SubPage) {
+                    IconButton(
+                        onClick = {
+                            onAddPage(
+                                page
+                            )
+                        },
+                        modifier = Modifier.size(18.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add page to section"
+                        )
+                    }
+                }
+            }
+        }
+        page.pages.forEach { subpage ->
+            PageScreen(
+                page, currentPage, onSelect, onAddPage
+            )
+        }
+    }
+
 }
 
 public fun LazyListScope.pages(

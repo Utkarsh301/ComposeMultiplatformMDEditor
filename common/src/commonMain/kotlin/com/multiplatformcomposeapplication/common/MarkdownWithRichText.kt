@@ -43,16 +43,15 @@ public fun MarkdownWithRichText(
     }
 
     val richTextState = rememberRichTextState()
-    var sections by remember {
-        mutableStateOf(
-            listOf(
-                MDContentElement(
+    var sections = remember {
+        mutableStateListOf(
+            MDContentElement(
                     id = 0,
                     title = "Section 1",
                     type = MDContentElementType.Section
                 )
             )
-        )
+
     }
 
     var currentSection: MDContentElement? by remember {
@@ -61,7 +60,7 @@ public fun MarkdownWithRichText(
     var currentPage: MDContentElement? by remember {
         mutableStateOf(null)
     }
-    var pages = remember {
+    val pages = remember {
         mutableStateListOf<MDContentElement>()
     }
     var markdown by remember(currentPage) {
@@ -114,7 +113,7 @@ public fun MarkdownWithRichText(
                     LazyColumn(
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        items(sections) { item: MDContentElement ->
+                        items(sections.toList()) { item: MDContentElement ->
                             Surface(
                                 modifier = Modifier.fillMaxWidth()
                                     .clickable(true, onClick = {
@@ -156,11 +155,11 @@ public fun MarkdownWithRichText(
 
                                             updatedSections.find { it.id == item.id }?.pages?.add(
                                                 MDContentElement(
-                                                id = pageCount,
-                                                title = "Page ${pageCount + 1}",
-                                                parent = item.id,
-                                                type = MDContentElementType.Page
-                                            ))
+                                                    id = pageCount,
+                                                    title = "Page ${pageCount + 1}",
+                                                    parent = item.id,
+                                                    type = MDContentElementType.Page
+                                                ))
 
                                             sections = updatedSections
                                             pageCount++
@@ -217,6 +216,7 @@ public fun MarkdownWithRichText(
                             )
                             pages.clear()
                             pages.addAll(updatedPages)
+                            sections.find { it.id == element.parent && it.type == MDContentElementType.Section }?.pages = updatedPages
                             pageCount++
                         }
                     )
@@ -296,8 +296,8 @@ public fun MarkdownWithRichText(
                                 onValueChange = { textFieldValue ->
                                     markdown = textFieldValue
 //                                    println(sections)
-                                    pages.find { it.id == currentPage?.id }?.content = markdown.text
-                                    sections.find { it.id == currentSection?.id }?.pages = pages
+                                    (pages.find { it.id == currentPage?.id } ?: pages.flatMap { it.pages }.find { it.id == currentPage?.id })?.content = markdown.text
+                                    sections.find { it.id == currentSection?.id }?.pages = pages.toMutableList()
                                 }
                             )
                         }
@@ -350,8 +350,8 @@ public fun MarkdownWithRichText(
                                 onValueChange = { textFieldValue ->
                                     markdown = textFieldValue
 //                                    println(currentPage)
-                                    pages.find { it.id == currentPage?.id }?.content = markdown.text
-                                    sections.find { it.id == currentSection?.id }?.pages = pages
+                                    (pages.find { it.id == currentPage?.id } ?: pages.flatMap { it.pages }.find { it.id == currentPage?.id })?.content = markdown.text
+                                    sections.find { it.id == currentSection?.id }?.pages = pages.toMutableList()
                                 }
                             )
                         }

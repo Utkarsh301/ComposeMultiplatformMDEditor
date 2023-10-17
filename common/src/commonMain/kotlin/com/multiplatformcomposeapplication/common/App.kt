@@ -13,7 +13,7 @@ import com.multiplatformcomposeapplication.common.MarkdownWithRichText
 public fun App() {
     MultiplatformComposeApplicationTheme {
         Scaffold {
-            MarkdownWithRichText(
+            MarkdownEditor(
                 modifier = Modifier.fillMaxSize()
             )
         }

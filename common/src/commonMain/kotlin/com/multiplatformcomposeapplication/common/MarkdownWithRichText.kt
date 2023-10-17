@@ -414,6 +414,7 @@ public data class MDContentElement(
     val title: String = "Untitled",
     var content: String? = null,
     val parent: Int? = null,
+    var children: MutableList<MDContentElement> = mutableListOf(),
     var pages: MutableList<MDContentElement> = mutableListOf(),
     val type: MDContentElementType
 )
@@ -422,6 +423,12 @@ public sealed class MDContentElementType() {
     public data object Section : MDContentElementType()
     public data object Page : MDContentElementType()
     public data object SubPage : MDContentElementType()
+
+    public data object Folder : MDContentElementType()
+
+    public data object SubFolder : MDContentElementType()
+
+    public data object File : MDContentElementType()
 }
 
 //public data class Section(

@@ -173,112 +173,118 @@ public fun MarkdownEditor(
 
                 })
                 Spacer(modifier = Modifier.height(8.dp))
-                if (isWideScreen) {
-                    Row(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                if (currentFile != null) {
+                    if (isWideScreen) {
+                        Row(
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            Text(
-                                text = "Editor:",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth().weight(1f).focusRequester(focusRequester),
-                                value = markdown,
-                                onValueChange = { textFieldValue ->
-                                    markdown = textFieldValue
-//                                    println(sections)
-                                    folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Markdown Text:",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            LazyColumn(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(1f)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
-                                    .padding(vertical = 12.dp, horizontal = 12.dp)
                             ) {
-                                item {
-                                    RichText(
-                                        state = richTextState,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f)
-                                    )
+                                Text(
+                                    text = "Editor:",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                OutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth().weight(1f).focusRequester(focusRequester),
+                                    value = markdown,
+                                    onValueChange = { textFieldValue ->
+                                        markdown = textFieldValue
+    //                                    println(sections)
+                                        folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
+                                    }
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    text = "Markdown Text:",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
+                                        .padding(vertical = 12.dp, horizontal = 12.dp)
+                                ) {
+                                    item {
+                                        RichText(
+                                            state = richTextState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    text = "Editor:",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth().weight(1f).focusRequester(focusRequester),
+                                    value = markdown,
+                                    onValueChange = { textFieldValue ->
+                                        markdown = textFieldValue
+    //                                    println(currentPage)
+                                        folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
+                                    }
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            ) {
+                                Text(
+                                    text = "Markdown Text:",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
+                                        .padding(vertical = 12.dp, horizontal = 12.dp)
+                                ) {
+                                    item {
+                                        RichText(
+                                            state = richTextState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Editor:",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth().weight(1f).focusRequester(focusRequester),
-                                value = markdown,
-                                onValueChange = { textFieldValue ->
-                                    markdown = textFieldValue
-//                                    println(currentPage)
-                                    folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Markdown Text:",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
-                                    .padding(vertical = 12.dp, horizontal = 12.dp)
-                            ) {
-                                item {
-                                    RichText(
-                                        state = richTextState,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f)
-                                    )
-                                }
-                            }
-                        }
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("No File is selected")
                     }
                 }
             }

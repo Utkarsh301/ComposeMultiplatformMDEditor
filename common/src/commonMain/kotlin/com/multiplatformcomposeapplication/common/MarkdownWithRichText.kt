@@ -411,7 +411,7 @@ public fun AdaptiveLayout(
 
 public data class MDContentElement(
     val id: Int,
-    val title: String = "Untitled",
+    var title: String = "Untitled",
     var content: String? = null,
     val parent: Int? = null,
     var children: MutableList<MDContentElement> = mutableListOf(),

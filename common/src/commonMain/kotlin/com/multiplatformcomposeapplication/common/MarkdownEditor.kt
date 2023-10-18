@@ -4,11 +4,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CreateNewFolder
-import androidx.compose.material.icons.filled.PostAdd
-import androidx.compose.material.icons.filled.SpaceDashboard
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,11 +16,19 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 public fun MarkdownEditor(
@@ -98,24 +104,31 @@ public fun MarkdownEditor(
                             FolderItem(
                                 folder, currentFile,
                                 onAddChild = { element, type ->
-                                    val updatedFolders = folders.toMutableList()
-                                    updatedFolders.searchById(element.id)?.children?.add(
+                                    folders.searchById(element.id)?.children?.add(
                                         MDContentElement(
                                             id = elementCount,
                                             title = "${
-                                                if(type is MDContentElementType.SubFolder) {
+                                                if (type is MDContentElementType.SubFolder) {
                                                     "SubFolder"
                                                 } else "File"
                                             } ${elementCount + 1}",
                                             type = type
                                         )
                                     )
-                                    folders.clear()
-                                    folders.addAll(updatedFolders)
                                     elementCount++
                                 },
                                 onSelectFile = {
                                     currentFile = it
+                                },
+                                onRename = { element, title ->
+                                    folders.searchById(element.id)?.title = title
+                                },
+                                onDelete = { delete ->
+                                    val updatedFolders = folders.deleteById(delete.id)
+                                    folders.clear()
+                                    folders.addAll(updatedFolders)
+                                    elementCount--
+                                    println(folders.toList())
                                 }
                             )
                         }
@@ -194,7 +207,7 @@ public fun MarkdownEditor(
                                     value = markdown,
                                     onValueChange = { textFieldValue ->
                                         markdown = textFieldValue
-    //                                    println(sections)
+                                        //                                    println(sections)
                                         folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
                                     }
                                 )
@@ -214,7 +227,11 @@ public fun MarkdownEditor(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outline,
+                                            MaterialTheme.shapes.extraSmall
+                                        )
                                         .padding(vertical = 12.dp, horizontal = 12.dp)
                                 ) {
                                     item {
@@ -247,7 +264,6 @@ public fun MarkdownEditor(
                                     value = markdown,
                                     onValueChange = { textFieldValue ->
                                         markdown = textFieldValue
-    //                                    println(currentPage)
                                         folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
                                     }
                                 )
@@ -267,7 +283,11 @@ public fun MarkdownEditor(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
-                                        .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.outline,
+                                            MaterialTheme.shapes.extraSmall
+                                        )
                                         .padding(vertical = 12.dp, horizontal = 12.dp)
                                 ) {
                                     item {
@@ -297,9 +317,21 @@ public fun FolderItem(
     child: MDContentElement,
     currentFile: MDContentElement?,
     onAddChild: (MDContentElement, MDContentElementType) -> Unit,
-    onSelectFile: (MDContentElement) -> Unit
+    onSelectFile: (MDContentElement) -> Unit,
+    onRename: (MDContentElement, String) -> Unit,
+    onDelete: (MDContentElement) -> Unit
 ) {
-
+    var openElementDropdown by remember {
+        mutableStateOf(false)
+    }
+    var openRenameDialog by remember {
+        mutableStateOf(false)
+    }
+    var childTitle by remember {
+        mutableStateOf(TextFieldValue(child.title, selection = TextRange(0, child.title.length)))
+    }
+    val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier.fillMaxWidth().padding(
             start = if (child.type != MDContentElementType.Folder)
@@ -320,44 +352,100 @@ public fun FolderItem(
             Text(
                 text = child.title
             )
-            if (child.type != MDContentElementType.File) {
-                Row {
-                    IconButton(
-                        onClick = {
-                            onAddChild(child, MDContentElementType.SubFolder)
+            Box {
+                IconButton(
+                    onClick = {
+                        openElementDropdown = true
+                    },
+                    modifier = Modifier.size(18.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Open Options"
+                    )
+                }
+                DropdownMenu(expanded = openElementDropdown, onDismissRequest = {
+                    openElementDropdown = false
+                }) {
+                    DropdownMenuItem(
+                        text = {
+                            Text("Rename")
                         },
-                        modifier = Modifier.size(18.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
+                        onClick = {
+                            openElementDropdown = false
+                            openRenameDialog = true
+                            scope.launch {
+                                delay(250)
+                                focusRequester.requestFocus()
+                            }
+                        }
+                    )
+                    if (child.type != MDContentElementType.File) {
+                        DropdownMenuItem(
+                            text = {
+                                Text("Add Sub Folder")
+                            },
+                            onClick = {
+                                openElementDropdown = false
+                                onAddChild(child, MDContentElementType.SubFolder)
+                            }
                         )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CreateNewFolder,
-                            contentDescription = "Add sub folder"
+                        DropdownMenuItem(
+                            text = {
+                                Text("Add File")
+                            },
+                            onClick = {
+                                openElementDropdown = false
+                                onAddChild(child, MDContentElementType.File)
+                            }
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(
-                        onClick = {
-                            onAddChild(child, MDContentElementType.File)
+                    DropdownMenuItem(
+                        text = {
+                            Text("Delete")
                         },
-                        modifier = Modifier.size(18.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PostAdd,
-                            contentDescription = "Add file"
-                        )
+                        onClick = {
+                            openElementDropdown = false
+                            onDelete(child)
+                        }
+                    )
+
+                }
+                if (openRenameDialog) {
+                    Dialog(onDismissRequest = {
+                        openRenameDialog = false
+                    }) {
+                        Card {
+                            Column(
+                                modifier = Modifier.padding(16.dp, 12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                OutlinedTextField(
+                                    modifier = Modifier.focusRequester(focusRequester),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    label = {
+                                        Text("Title")
+                                    },
+                                    value = childTitle,
+                                    onValueChange = {
+                                        childTitle = it
+                                    })
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(onClick = {
+                                    openRenameDialog = false
+                                    onRename(child, childTitle.text)
+                                }) {
+                                    Text("Submit")
+                                }
+                            }
+                        }
                     }
                 }
-
             }
         }
         child.children.forEach { subChild ->
             FolderItem(
-                subChild, currentFile, onAddChild, onSelectFile
+                subChild, currentFile, onAddChild, onSelectFile, onRename, onDelete
             )
         }
     }
@@ -374,4 +462,15 @@ public fun MutableList<MDContentElement>.searchById(id: Int): MDContentElement? 
         }
     }
     return null
+}
+
+public fun MutableList<MDContentElement>.deleteById(id: Int): MutableList<MDContentElement> {
+
+    val updated = mutableListOf<MDContentElement>()
+
+    for (element in this) {
+        if (element.id != id) updated.add(element.copy(children = element.children.deleteById(id)))
+    }
+    return updated
+
 }

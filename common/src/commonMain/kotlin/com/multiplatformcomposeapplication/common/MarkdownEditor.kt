@@ -1,7 +1,6 @@
 package com.multiplatformcomposeapplication.common
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,10 +15,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -31,7 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-public fun MarkdownEditor(
+public fun MyMarkdownEditor(
     modifier: Modifier = Modifier
 ) {
     var elementCount by remember {
@@ -57,7 +52,7 @@ public fun MarkdownEditor(
         mutableStateOf(false)
     }
     var openDrawer by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     val focusRequester = remember { FocusRequester() }
     val mdElements = rememberMDElements()
@@ -128,7 +123,7 @@ public fun MarkdownEditor(
                                     folders.clear()
                                     folders.addAll(updatedFolders)
                                     elementCount--
-                                    println(folders.toList())
+                                    if (delete.id == currentFile?.id) currentFile = null
                                 }
                             )
                         }
@@ -152,18 +147,21 @@ public fun MarkdownEditor(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column(modifier = Modifier.fillMaxWidth()) {
-                AddMDElementRow(modifier = Modifier.fillMaxWidth()
-                    .border(width = 0.5.dp, color = MaterialTheme.colorScheme.outline), onClick = { mdElement ->
-                    focusRequester.requestFocus()
-                    val newText = if (mdElement.isAtStart && markdown.text.isNotBlank()) {
-                        if (markdown.text.contains("\n"))
-                            markdown.text.replaceAfterLast("\n", mdElement.content.toString())
-                        else {
-                            val previousContent =
-                                (mdElements.filter { it.type == mdElement.type }.takeIf { it.isNotEmpty() }
-                                    ?: mdElements.toMutableList().flatMap { it.subOptions ?: listOf() }
-                                        .filter { it.type == mdElement.type })/*.find { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) }*/
-//                        println(previousContent.findLast { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) })
+                if (currentFile != null) {
+                    AddMDElementRow(
+                        modifier = Modifier.fillMaxWidth()
+                            .border(width = 0.5.dp, color = MaterialTheme.colorScheme.outline)
+                    ) { mdElement ->
+                        focusRequester.requestFocus()
+                        /*val newText = if (mdElement.isAtStart && markdown.text.isNotBlank()) {
+                            if (markdown.text.contains("\n"))
+                                markdown.text.replaceAfterLast("\n", mdElement.content.toString())
+                            else {
+    //                            val previousContent =
+    //                                (mdElements.filter { it.type == mdElement.type }.takeIf { it.isNotEmpty() }
+    //                                    ?: mdElements.toMutableList().flatMap { it.subOptions ?: listOf() }
+    //                                        .filter { it.type == mdElement.type }).asReversed().find { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) }
+                                *//*println(previousContent.findLast { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) })
                             markdown.text.replace(
                                 previousContent.findLast {
                                     markdown.text.contains(
@@ -173,20 +171,134 @@ public fun MarkdownEditor(
                                     )
                                 }?.content ?: "",
                                 mdElement.content.toString()
-                            )
+                            )*//*
+//                            println(previousContent)
+//                            val text = markdown.text.replace(previousContent?.content.toString(), "")
+
+                            mdElement.content?.plus(mdElement.regex?.find(markdown.text)?.groupValues?.last() ?: markdown.text)
                         }
-                    } else markdown.text.plus(mdElement.content)
+                    } else {
+                        markdown.text.plus(mdElement.content)
+                    }*/
+                        val lines = """^.*$""".toRegex(RegexOption.MULTILINE).findAll(
+                            markdown.text
+                        )
+                        val currentLine = lines.findLast {
+                            println(it.range)
+                            IntRange(it.range.first, it.range.last + 1).contains(markdown.selection.start)
+                        }.also {
+                            println(it?.value)
+                        }
+                        val lastText = mdElement.regex?.find(
+                            currentLine?.value ?: markdown.text
+                        ).also {
+                            println(it?.groupValues)
+                        }
+                        val formattedText = if (markdown.text.isNotBlank()) {
+                            when (mdElement.type) {
+                                ElementTypes.HEADING -> {
+                                    mdElement.content?.plus(
+                                        lastText?.groupValues?.last() ?: currentLine?.value ?: markdown.text
+                                    )
+                                }
+
+                                ElementTypes.LIST -> {
+                                    buildString {
+                                        append(mdElement.content)
+                                        append(lastText?.groupValues?.last() ?: currentLine?.value ?: markdown.text)
+                                    }
+                                }
+
+                                ElementTypes.TEXT_FORMATTING -> {
+                                    buildString {
+                                        append(
+                                            (currentLine?.value ?: markdown.text).substring(
+                                                0,
+                                                lastText?.range?.first ?: 0
+                                            )
+                                        )
+                                        append(
+                                            "${
+                                                mdElement.content?.substring(
+                                                    0,
+                                                    mdElement.content.length.minus(mdElement.cursorDecrease ?: 0)
+                                                )
+                                            }${lastText?.groupValues?.joinToString(" ") { it }}${
+                                                mdElement.content?.substring(
+                                                    mdElement.cursorDecrease ?: 0
+                                                )
+                                            }"
+                                        )
+                                        append(
+                                            (currentLine?.value ?: markdown.text).substring(
+                                                lastText?.range?.last?.plus(1) ?: 0,
+                                                (currentLine?.value ?: markdown.text).length
+                                            )
+                                        )
+                                    }
+                                }
+
+                                ElementTypes.CODE -> {
+                                    buildString {
+                                        append("`${currentLine?.value ?: markdown.text}`")
+                                    }
+                                }
+
+                                ElementTypes.LINK -> {
+                                    buildString {
+                                        append("[${currentLine?.value ?: markdown.text}]()")
+                                    }
+                                }
+
+                                ElementTypes.SUB_OPTIONS -> TODO()
+                                ElementTypes.YAML -> {
+                                    buildString {
+                                        append(mdElement.content)
+                                        append("\n")
+                                        append(markdown.text)
+                                    }
+                                }
+
+                                ElementTypes.TABLE -> {
+                                    buildString {
+                                        append(mdElement.content)
+                                        append("\n")
+                                        append(markdown.text)
+                                    }
+                                }
+                            }
+                        } else {
+                            markdown.text.plus(mdElement.content)
+                        }
+
+                        val newText = buildString {
+                            if ((currentLine?.range?.first ?: 0) > 0) {
+                                append(markdown.text.substring(0, currentLine?.range?.first?.minus(1) ?: 0))
+                                append("\n")
+                            }
+                            append(formattedText)
+                            if ((currentLine?.range?.last ?: 0) < markdown.text.length - 1) {
+                                append("\n")
+                                append(markdown.text.substring(currentLine?.range?.last?.plus(2) ?: 0))
+                            }
+                        }
+
+                        if (formattedText != null) {
+                            markdown = markdown.copy(
+                                newText,
+                                selection = TextRange(
+                                    Regex(
+                                        "\\b\\w+(?:\\s+\\w+)*\\b",
+                                        RegexOption.IGNORE_CASE
+                                    ).find(newText, currentLine?.range?.first ?: 0)?.range?.last ?: mdElement.cursorDecrease ?: 0
+                                )
+                            )
+
+                        }
 
 
-                    markdown = markdown.copy(
-                        newText,
-                        selection = TextRange(newText.length.minus(mdElement.cursorDecrease ?: 0))
-                    )
-
-
-                })
-                Spacer(modifier = Modifier.height(8.dp))
-                if (currentFile != null) {
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     if (isWideScreen) {
                         Row(
                             modifier = Modifier.fillMaxSize()
@@ -207,7 +319,6 @@ public fun MarkdownEditor(
                                     value = markdown,
                                     onValueChange = { textFieldValue ->
                                         markdown = textFieldValue
-                                        //                                    println(sections)
                                         folders.searchById(currentFile?.id ?: -1)?.content = markdown.text
                                     }
                                 )

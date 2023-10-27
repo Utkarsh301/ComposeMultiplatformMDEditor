@@ -42,6 +42,7 @@ kotlin {
                 implementation(libs.ui.util)
                 implementation(libs.richeditor.compose)
 
+
             }
         }
         val jvmTest by getting

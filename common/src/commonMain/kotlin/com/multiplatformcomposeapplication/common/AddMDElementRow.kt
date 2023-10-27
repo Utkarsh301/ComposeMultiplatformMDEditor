@@ -45,7 +45,8 @@ public fun rememberMDElements(): MutableList<MDElement> {
                     description = "Add Heading 1",
                     titleTextStyle = MaterialTheme.typography.titleLarge,
                     isAtStart = true,
-                    type = ElementTypes.HEADING
+                    type = ElementTypes.HEADING,
+                    regex = Regex("#{1,3} (.*)")
                 ),
                 MDElement(
                     title = "Heading 2",
@@ -53,7 +54,8 @@ public fun rememberMDElements(): MutableList<MDElement> {
                     description = "Add Heading 2",
                     titleTextStyle = MaterialTheme.typography.titleMedium,
                     isAtStart = true,
-                    type = ElementTypes.HEADING
+                    type = ElementTypes.HEADING,
+                    regex = Regex("#{1,3} (.*)")
                 ),
                 MDElement(
                     title = "Heading 3",
@@ -61,7 +63,8 @@ public fun rememberMDElements(): MutableList<MDElement> {
                     description = "Add Heading 3",
                     titleTextStyle = MaterialTheme.typography.titleSmall,
                     isAtStart = true,
-                    type = ElementTypes.HEADING
+                    type = ElementTypes.HEADING,
+                    regex = Regex("#{1,3} (.*)")
                 )
             ),
             type = ElementTypes.SUB_OPTIONS
@@ -71,46 +74,53 @@ public fun rememberMDElements(): MutableList<MDElement> {
             content = "****",
             description = "Add Bold Text",
             cursorDecrease = 2,
-            type = ElementTypes.TEXT_FORMATTING
+            type = ElementTypes.TEXT_FORMATTING,
+            regex = Regex("\\b\\w+(?:\\s+\\w+)*\\b", RegexOption.IGNORE_CASE)
         ),
         MDElement(
             imageVector = Icons.Default.FormatItalic,
             content = "__",
             description = "Add Italic Text",
             cursorDecrease = 1,
-            type = ElementTypes.TEXT_FORMATTING
+            type = ElementTypes.TEXT_FORMATTING,
+            regex = Regex("\\b\\w+(?:\\s+\\w+)*\\b", RegexOption.IGNORE_CASE)
         ),
         MDElement(
             imageVector = Icons.Default.Link,
             content = "[]()",
             description = "Add Link",
             cursorDecrease = 3,
-            type = ElementTypes.TEXT_FORMATTING
+            type = ElementTypes.LINK,
+            regex = Regex("\\b\\w+(?:\\s+\\w+)*\\b", RegexOption.IGNORE_CASE)
         ),
         MDElement(
             imageVector = Icons.Default.Code,
             content = "``",
             description = "Add Code",
             cursorDecrease = 1,
-            type = ElementTypes.TEXT_FORMATTING
+            type = ElementTypes.CODE,
+            regex = Regex("\\b\\w+(?:\\s+\\w+)*\\b", RegexOption.IGNORE_CASE)
         ),
         MDElement(
             imageVector = Icons.Default.FormatListBulleted,
-            content = "-",
+            content = "- ",
             description = "Add Bulleted List",
-            type = ElementTypes.LIST
+            type = ElementTypes.LIST,
+            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Default.FormatListNumbered,
             content = "1. ",
             description = "Add Numbered List",
-            type = ElementTypes.LIST
+            type = ElementTypes.LIST,
+            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Default.Checklist,
             content = "- [ ] ",
             description = "Add Check List",
-            type = ElementTypes.LIST
+            type = ElementTypes.LIST,
+            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Filled.IntegrationInstructions,
@@ -122,7 +132,7 @@ public fun rememberMDElements(): MutableList<MDElement> {
                 |title: Hello World
                 |---""".trimMargin(),
             description = "Add Yaml Tag",
-            type = ElementTypes.TEXT_FORMATTING
+            type = ElementTypes.YAML
         ),
         MDElement(
             imageVector = Icons.Default.Subtitles,

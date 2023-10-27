@@ -5,6 +5,7 @@ compose-version = "1.5.1"
 ktor-version = "2.3.4"
 koin-version = "3.4.0"
 richeditor-compose = "1.0.0-beta03"
+twain = "0.2.2"
 ui-util = "1.5.1"
 
 [plugins]
@@ -23,4 +24,5 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1
 androidx-core = { module = "androidx.core:core-ktx", version = "1.10.1" }
 androidx-activity-compose = "androidx.activity:activity-compose:1.7.2"
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditor-compose" }
+twain = { module = "com.meetup:twain", version.ref = "twain" }
 ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "ui-util" }

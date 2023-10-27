@@ -158,11 +158,12 @@ public data class MDElement(
     val subOptions: MutableList<MDElement>? = null,
     val cursorDecrease: Int? = null,
     val isAtStart: Boolean = false,
-    val type: ElementTypes
+    val type: ElementTypes,
+    val regex: Regex? = null
 )
 
 public enum class ElementTypes {
-    HEADING, LIST, TEXT_FORMATTING, SUB_OPTIONS, TABLE
+    HEADING, LIST, TEXT_FORMATTING, SUB_OPTIONS, TABLE, LINK, CODE, YAML
 }
 
 public fun Pair<String, String>.getMDContent(): String {

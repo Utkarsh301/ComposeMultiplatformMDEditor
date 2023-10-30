@@ -15,7 +15,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -214,7 +216,7 @@ public fun MyMarkdownEditor(
                                         append(
                                             (currentLine?.value ?: markdown.text).substring(
                                                 0,
-                                                lastText?.range?.first ?: 0
+                                                lastText?.range?.first ?: markdown.text.length
                                             )
                                         )
                                         append(
@@ -223,18 +225,22 @@ public fun MyMarkdownEditor(
                                                     0,
                                                     mdElement.content.length.minus(mdElement.cursorDecrease ?: 0)
                                                 )
-                                            }${lastText?.groupValues?.joinToString(" ") { it }}${
+                                            }${lastText?.groupValues?.joinToString(" ") { it } ?: ""}${
                                                 mdElement.content?.substring(
                                                     mdElement.cursorDecrease ?: 0
                                                 )
                                             }"
                                         )
-                                        append(
-                                            (currentLine?.value ?: markdown.text).substring(
-                                                lastText?.range?.last?.plus(1) ?: 0,
-                                                (currentLine?.value ?: markdown.text).length
+
+                                        lastText?.range?.last?.plus(1)?.let {
+                                            append(
+                                                (currentLine?.value ?: markdown.text).substring(
+                                                    it,
+                                                    (currentLine?.value ?: markdown.text).length
+                                                )
                                             )
-                                        )
+                                        }
+
                                     }
                                 }
 
@@ -290,7 +296,8 @@ public fun MyMarkdownEditor(
                                     Regex(
                                         "\\b\\w+(?:\\s+\\w+)*\\b",
                                         RegexOption.IGNORE_CASE
-                                    ).find(newText, currentLine?.range?.first ?: 0)?.range?.last ?: mdElement.cursorDecrease ?: 0
+                                    ).find(newText, currentLine?.range?.first ?: 0)?.range?.last
+                                        ?: mdElement.cursorDecrease ?: 0
                                 )
                             )
 

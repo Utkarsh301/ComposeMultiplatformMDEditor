@@ -26,15 +26,6 @@ import androidx.compose.ui.window.PopupProperties
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.onEach
 
-
-//@Composable
-//fun RichTextStyleButton(
-//    onClick: () -> Unit,
-//    icon: ImageVector,
-//    tint: Color? = null,
-//    isSelected: Boolean
-//)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun AddMDElementButton(

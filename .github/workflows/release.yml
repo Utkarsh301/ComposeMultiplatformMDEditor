@@ -1,44 +1,74 @@
-
-name: Build and Release Desktop App
-
+name: Release
 on:
   push:
     branches:
       - master
 
 jobs:
-  build-and-release:
-    runs-on: windows-latest
+
+  build:
+
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v1
         with:
-          java-version: 14
-          distribution: windows
+          java-version: 11
 
-      - name: Build Desktop App for Windows
-        run: |
-          # Replace with your build command for the desktop app
-          ./gradlew createDistributable
+      - name: Build Android
+        run: ./gradlew assembleAndroidRelease
 
-      - name: Upload Windows Desktop App
-        uses: actions/upload-artifact@v2
+      - name: Build Desktop
+        run: ./gradlew assembleDesktopRelease
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
         with:
-          name: desktop-app-windows
-          path: build/libs/desktop-release
+          name: App
+          path: |
+            build/app-android.apk
+            build/app-desktop.jar
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+  deploy:
+
+    needs: build
+    
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v1
         with:
-          files: |
-            ${{ steps.upload.outputs.artifactPath }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: App
 
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
 
-
-
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: |
+            app-android.apk
+            app-desktop.jar
+          asset_name: |
+            app-android.apk
+            app-desktop.jar
+          asset_content_type: |
+            application/vnd.android.package-archive
+            application/java-archive

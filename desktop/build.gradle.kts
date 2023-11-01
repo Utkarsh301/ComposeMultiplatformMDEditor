@@ -56,6 +56,25 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "MD Editor"
             packageVersion = "1.0.0"
+            windows {
+                this.packageVersion = "1.0.0"
+            }
         }
     }
 }
+
+//jpackage {
+//    imageName = "my-app"
+//
+//    destinationDir = file("build/jpackage")
+//
+//    appVersion = "1.0.0"
+//
+//    inputDir = findProperty("kotlin.root") + "/build/libs"
+//
+//    installerType = "exe"
+//
+//    winDirChooser = true
+//    winShortcut = true
+//    winMenuGroup = true
+//}

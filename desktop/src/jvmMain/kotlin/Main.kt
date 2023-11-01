@@ -1,3 +1,5 @@
+package com.multiplatformcomposeapplication
+
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.foundation.isSystemInDarkTheme

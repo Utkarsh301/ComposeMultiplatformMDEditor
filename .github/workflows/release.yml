@@ -29,7 +29,7 @@ jobs:
             --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
             --main-class com.multiplatformcomposeapplication.Main.kt \
             --app-version 1.0.0 \
-            --type dmg
+            --type pkg
           cp MDEditor.dmg /desktop/release/mdeditor-installer.dmg  # Copy the generated installer to a known location
 
       - name: Upload Installer

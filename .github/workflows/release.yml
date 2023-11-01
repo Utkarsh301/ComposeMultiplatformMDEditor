@@ -36,11 +36,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your-app-installer
-          path: /path/to/your-installer.dmg
+          path: /desktop/release/mdeditor-installer.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            /path/to/your-installer.dmg
+            /desktop/release/mdeditor-installer.exe
           token: ${{ secrets.GITHUB_TOKEN }}

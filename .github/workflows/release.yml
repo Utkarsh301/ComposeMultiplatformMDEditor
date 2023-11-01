@@ -1,12 +1,12 @@
-name: Build and Release
+name: Build and Package Desktop App
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
-  build-and-release:
+  build-and-package:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,31 +16,39 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: 14
+          java-version: 17  # Use the appropriate JDK version
 
-      - name: Build Java Application
-        run: ./gradlew createDistributable
-
-      - name: Package Desktop Application
+      - name: Build Compose Multiplatform Project
         run: |
+          # Replace with your actual build command for the Compose Multiplatform project
+          ./gradlew createDistributable
+
+      - name: Package Desktop App for Windows
+        run: |
+          # Replace with the commands to package the Compose app for Windows using a tool like 'jpackage'
+          # Ensure that you specify the input, output, and other necessary parameters
           jpackage \
             --name MDEditor \
-            --input /desktop/build/compose \
+            --input desktop/build/compose \
             --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
             --main-class com.multiplatformcomposeapplication.Main.kt \
             --app-version 1.0.0 \
             --type exe
-          cp MDEditor.exe /desktop/release/mdeditor-installer.exe  # Copy the generated installer to a known location
+
+#      - name: Package Desktop App for macOS
+#        run: |
+#          # Replace with the commands to package the Compose app for macOS
+#          # Make sure to specify the appropriate parameters for the macOS packaging tool you are using
 
       - name: Upload Installer
         uses: actions/upload-artifact@v2
         with:
           name: your-app-installer
-          path: /desktop/release/mdeditor-installer.exe
+          path: /desktop/installer/your-installer.exe  # Adjust the path and file name accordingly
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            /desktop/release/mdeditor-installer.exe
+            /desktop/installer/your-installer.exe  # Adjust the path and file name
           token: ${{ secrets.GITHUB_TOKEN }}

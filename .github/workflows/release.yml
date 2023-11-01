@@ -19,10 +19,10 @@ jobs:
           java-version: 11
 
       - name: Build Android
-        run: ./gradlew assembleAndroidRelease
+        run: ./gradlew assembleRelease
 
       - name: Build Desktop
-        run: ./gradlew assembleDesktopRelease
+        run: ./gradlew createDistributable
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1

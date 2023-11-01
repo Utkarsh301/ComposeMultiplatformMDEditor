@@ -1,26 +1,43 @@
 
-name: Release
+name: Build and Release Desktop App
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-release:
+    runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 11
-      - name: Build with Gradle
-        run: ./gradlew build
+          java-version: '11'
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+      - name: Build Desktop App for Windows
+        run: |
+          # Replace with your build command for the desktop app
+          ./gradlew createDistributable
+
+      - name: Upload Windows Desktop App
+        uses: actions/upload-artifact@v2
         with:
-          name: App-Package
-          path: build/app.zip
+          name: desktop-app-windows
+          path: build/libs/desktop-release
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.upload.outputs.artifactPath }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+
 

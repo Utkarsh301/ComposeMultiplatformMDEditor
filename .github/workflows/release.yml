@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 17
+          distribution: windows
 
       - name: Build Java Application
         run: ./gradlew createDistributable
@@ -29,8 +30,8 @@ jobs:
             --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
             --main-class com.multiplatformcomposeapplication.Main.kt \
             --app-version 1.0.0 \
-            --type pkg
-          cp MDEditor.dmg /desktop/release/mdeditor-installer.dmg  # Copy the generated installer to a known location
+            --type exe
+          cp MDEditor.exe /desktop/release/mdeditor-installer.exe  # Copy the generated installer to a known location
 
       - name: Upload Installer
         uses: actions/upload-artifact@v2

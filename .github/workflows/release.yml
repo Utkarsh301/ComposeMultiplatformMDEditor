@@ -4,7 +4,7 @@ name: Build and Release Desktop App
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-release:

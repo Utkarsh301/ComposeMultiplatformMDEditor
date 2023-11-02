@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: MD Editor MacOS
-          path: /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor.app  # Adjust the path and file name accordingly
+          path: /Users/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor.app  # Adjust the path and file name accordingly
 
 #      - name: Create GitHub Release
 #        uses: actions/create-release@v1

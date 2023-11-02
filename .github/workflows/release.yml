@@ -23,17 +23,17 @@ jobs:
           # Replace with your actual build command for the Compose Multiplatform project
           ./gradlew createDistributable
 
-#      - name: Package Desktop App for Windows
-#        run: |
-#          # Replace with the commands to package the Compose app for Windows using a tool like 'jpackage'
-#          # Ensure that you specify the input, output, and other necessary parameters
-#          jpackage \
-#            --name MDEditor \
-#            --input desktop/build/compose \
-#            --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
-#            --main-class com.multiplatformcomposeapplication.Main.kt \
-#            --app-version 1.0.0 \
-#            --type exe
+      - name: Package Desktop App for Windows
+        run: |
+          # Replace with the commands to package the Compose app for Windows using a tool like 'jpackage'
+          # Ensure that you specify the input, output, and other necessary parameters
+          jpackage \
+            --name MDEditor \
+            --input desktop/build/compose \
+            --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
+            --main-class com.multiplatformcomposeapplication.Main.kt \
+            --app-version 1.0.0 \
+            --type exe
 
 #      - name: Package Desktop App for macOS
 #        run: |

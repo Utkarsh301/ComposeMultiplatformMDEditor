@@ -46,10 +46,10 @@ jobs:
           name: your-app-installer
           path: /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor  # Adjust the path and file name accordingly
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v1.0.0
-          files: |
-           /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor  # Adjust the path and file name
-          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Create GitHub Release
+#        uses: actions/create-release@v1
+#        with:
+#          tag_name: v1.0.0
+#          files: |
+#           /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor  # Adjust the path and file name
+#          token: ${{ secrets.GITHUB_TOKEN }}

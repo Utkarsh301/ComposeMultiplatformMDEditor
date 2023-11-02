@@ -40,13 +40,6 @@ jobs:
 #          # Replace with the commands to package the Compose app for macOS
 #          # Make sure to specify the appropriate parameters for the macOS packaging tool you are using
 
-
-      - name: Create Tag
-        run:
-          # Create a tag with a version number, e.g., 1.0.0
-          git tag -a v1.0.0 -m "Release version 1.0.0"
-          git push origin --tag v1.0.0
-
       - name: Upload Installer
         uses: actions/upload-artifact@v2
         with:
@@ -57,7 +50,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
           files: |
            /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app  # Adjust the path and file name
           token: ${{ secrets.GITHUB_TOKEN }}

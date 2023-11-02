@@ -61,7 +61,7 @@ jobs:
       - name: Build Compose Multiplatform Project
         run: |
           # Replace with your actual build command for the Compose Multiplatform project
-          ./gradlew createDistributable
+          ./gradlew packageDmg
 
       #      - name: Package Desktop App for Windows
       #        run: |
@@ -84,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: MD Editor MacOS
-          path: /Users/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/app/MD Editor.app  # Adjust the path and file name accordingly
+          path: /Users/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/dmg/  # Adjust the path and file name accordingly
 
 #      - name: Create GitHub Release
 #        uses: actions/create-release@v1

@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: your-app-installer
-          path: D:\a\handson-kotlin-multiplatform-md-editor\handson-kotlin-multiplatform-md-editor\desktop\build\compose\binaries\main\app  # Adjust the path and file name accordingly
+          path: D:\a\handson-kotlin-multiplatform-md-editor\handson-kotlin-multiplatform-md-editor\desktop\build\compose\binaries\main\app\Md Editor  # Adjust the path and file name accordingly
 
 #      - name: Create GitHub Release
 #        uses: actions/create-release@v1

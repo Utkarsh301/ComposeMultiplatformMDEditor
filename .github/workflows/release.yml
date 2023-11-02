@@ -40,11 +40,11 @@ jobs:
 #          # Replace with the commands to package the Compose app for macOS
 #          # Make sure to specify the appropriate parameters for the macOS packaging tool you are using
 
-#      - name: Upload Installer
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: your-app-installer
-#          path: /desktop/installer/your-installer.exe  # Adjust the path and file name accordingly
+      - name: Upload Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: your-app-installer
+          path: /desktop/build/compose/binaries/main/app/your-installer.exe  # Adjust the path and file name accordingly
 #
 #      - name: Create GitHub Release
 #        uses: softprops/action-gh-release@v1

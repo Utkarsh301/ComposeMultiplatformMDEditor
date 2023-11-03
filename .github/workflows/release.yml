@@ -86,6 +86,46 @@ jobs:
           name: MD Editor MacOS
           path: /Users/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/desktop/build/compose/binaries/main/dmg/  # Adjust the path and file name accordingly
 
+  build-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17  # Use the appropriate JDK version
+
+      - name: Build Compose Multiplatform Project
+        run: |
+          # Replace with your actual build command for the Compose Multiplatform project
+          ./gradlew build
+
+      #      - name: Package Desktop App for Windows
+      #        run: |
+      #          # Replace with the commands to package the Compose app for Windows using a tool like 'jpackage'
+      #          # Ensure that you specify the input, output, and other necessary parameters
+      #          jpackage \
+      #            --name MDEditor \
+      #            --input desktop/build/compose \
+      #            --main-jar desktop/build/libs/desktop-jvm-1.0-SNAPSHOT.jar \
+      #            --main-class com.multiplatformcomposeapplication.Main.kt \
+      #            --app-version 1.0.0 \
+      #            --type dmg
+
+      #      - name: Package Desktop App for macOS
+      #        run: |
+      #          # Replace with the commands to package the Compose app for macOS
+      #          # Make sure to specify the appropriate parameters for the macOS packaging tool you are using
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: MD Editor Web
+          path: /home/runner/work/handson-kotlin-multiplatform-md-editor/handson-kotlin-multiplatform-md-editor/jsApp/build/dist/js/  # Adjust the path and file name accordingly
+
 #      - name: Create GitHub Release
 #        uses: actions/create-release@v1
 #        with:

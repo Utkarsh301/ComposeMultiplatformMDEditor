@@ -106,21 +106,21 @@ public fun rememberMDElements(): MutableList<MDElement> {
             content = "- ",
             description = "Add Bulleted List",
             type = ElementTypes.LIST,
-            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
+            regex = Regex("""^(?:1\. |- \[ \] |- \[x\] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Default.FormatListNumbered,
             content = "1. ",
             description = "Add Numbered List",
             type = ElementTypes.LIST,
-            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
+            regex = Regex("""^(?:1\. |- \[ \] |- \[x\] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Default.Checklist,
             content = "- [ ] ",
             description = "Add Check List",
             type = ElementTypes.LIST,
-            regex = Regex("""^(?:1\. |- \[ ] |- \[x] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
+            regex = Regex("""^(?:1\. |- \[ \] |- \[x\] |- )\s*(.+)""", setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
         ),
         MDElement(
             imageVector = Icons.Filled.IntegrationInstructions,

@@ -22,7 +22,9 @@ kotlin {
 }
 
 compose.experimental {
-    web.application {}
+    web.application {
+
+    }
 }
 
 afterEvaluate {

@@ -52,6 +52,10 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation(libs.richeditor.compose)
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.transitions)
+//                implementation(libs.markdown)
+//                implementation(libs.ksoup.html)
 
             }
         }

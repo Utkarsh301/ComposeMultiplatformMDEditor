@@ -41,6 +41,8 @@ kotlin {
                 implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$version")
                 implementation(libs.ui.util)
                 implementation(libs.richeditor.compose)
+//                implementation(libs.markdown)
+//                implementation(libs.ksoup.html)
 
 
             }

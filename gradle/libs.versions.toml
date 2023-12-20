@@ -7,6 +7,9 @@ koin-version = "3.4.0"
 richeditor-compose = "1.0.0-beta03"
 twain = "0.2.2"
 ui-util = "1.5.1"
+voyager = "1.0.0-rc05"
+ksoupHtml = "0.2.1"
+markdown = "0.5.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp.version" }
@@ -26,3 +29,13 @@ androidx-activity-compose = "androidx.activity:activity-compose:1.7.2"
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditor-compose" }
 twain = { module = "com.meetup:twain", version.ref = "twain" }
 ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "ui-util" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-androidx = { module = "cafe.adriel.voyager:voyager-androidx", version.ref = "voyager" }
+voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+voyager-kodein = { module = "cafe.adriel.voyager:voyager-kodein", version.ref = "voyager" }
+ksoup-html = { module = "com.mohamedrejeb.ksoup:ksoup-html", version.ref = "ksoupHtml" }
+markdown = { module = "org.jetbrains:markdown", version.ref = "markdown" }

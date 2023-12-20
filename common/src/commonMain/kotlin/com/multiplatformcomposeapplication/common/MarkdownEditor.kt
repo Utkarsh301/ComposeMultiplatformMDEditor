@@ -22,11 +22,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
+import cafe.adriel.voyager.core.screen.Screen
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+public object MarkdownEditorScreen: Screen {
+    @Composable
+    override fun Content() {
+        MyMarkdownEditor()
+    }
+
+}
 
 @Composable
 public fun MyMarkdownEditor(
@@ -156,33 +166,6 @@ public fun MyMarkdownEditor(
                             .border(width = 0.5.dp, color = MaterialTheme.colorScheme.outline)
                     ) { mdElement ->
                         focusRequester.requestFocus()
-                        /*val newText = if (mdElement.isAtStart && markdown.text.isNotBlank()) {
-                            if (markdown.text.contains("\n"))
-                                markdown.text.replaceAfterLast("\n", mdElement.content.toString())
-                            else {
-    //                            val previousContent =
-    //                                (mdElements.filter { it.type == mdElement.type }.takeIf { it.isNotEmpty() }
-    //                                    ?: mdElements.toMutableList().flatMap { it.subOptions ?: listOf() }
-    //                                        .filter { it.type == mdElement.type }).asReversed().find { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) }
-                                *//*println(previousContent.findLast { markdown.text.contains("${it.content.toString().trim()}\\s".toRegex()) })
-                            markdown.text.replace(
-                                previousContent.findLast {
-                                    markdown.text.contains(
-                                        "${
-                                            it.content.toString().trim()
-                                        }\\s".toRegex()
-                                    )
-                                }?.content ?: "",
-                                mdElement.content.toString()
-                            )*//*
-//                            println(previousContent)
-//                            val text = markdown.text.replace(previousContent?.content.toString(), "")
-
-                            mdElement.content?.plus(mdElement.regex?.find(markdown.text)?.groupValues?.last() ?: markdown.text)
-                        }
-                    } else {
-                        markdown.text.plus(mdElement.content)
-                    }*/
                         val lines = """^.*$""".toRegex(RegexOption.MULTILINE).findAll(
                             markdown.text
                         )
@@ -410,6 +393,12 @@ public fun MyMarkdownEditor(
                                         .padding(vertical = 12.dp, horizontal = 12.dp)
                                 ) {
                                     item {
+//                                        Text(
+//                                            text = richTextState.toHtml(),
+//                                            modifier = Modifier
+//                                                .fillMaxWidth()
+//                                                .weight(1f)
+//                                        )
                                         RichText(
                                             state = richTextState,
                                             modifier = Modifier
@@ -438,7 +427,8 @@ public fun FolderItem(
     onAddChild: (MDContentElement, MDContentElementType) -> Unit,
     onSelectFile: (MDContentElement) -> Unit,
     onRename: (MDContentElement, String) -> Unit,
-    onDelete: (MDContentElement) -> Unit
+    onDelete: (MDContentElement) -> Unit,
+    depth: Int = 0
 ) {
     var openElementDropdown by remember {
         mutableStateOf(false)
@@ -452,10 +442,7 @@ public fun FolderItem(
     val focusRequester = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     Column(
-        modifier = Modifier.fillMaxWidth().padding(
-            start = if (child.type != MDContentElementType.Folder)
-                16.dp else 0.dp
-        )
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().background(
@@ -468,9 +455,12 @@ public fun FolderItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = child.title
-            )
+            Row {
+                Spacer(modifier = Modifier.width(depth * 14.dp))
+                Text(
+                    text = child.title
+                )
+            }
             Box {
                 IconButton(
                     onClick = {
@@ -564,7 +554,7 @@ public fun FolderItem(
         }
         child.children.forEach { subChild ->
             FolderItem(
-                subChild, currentFile, onAddChild, onSelectFile, onRename, onDelete
+                subChild, currentFile, onAddChild, onSelectFile, onRename, onDelete, depth + 1
             )
         }
     }
